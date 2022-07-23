@@ -1,7 +1,7 @@
 #Library imports
 import numpy as np
-from fastapi import FastAPI, File, UploadFile, Response
-from fastapi.responses import StreamingResponse, FileResponse
+from fastapi import FastAPI, File, UploadFile
+from fastapi.responses import PlainTextResponse
 import numpy as np
 import io
 from PIL import Image
@@ -17,13 +17,26 @@ model = load_model('plant_disease.h5')
 #Name of Classes
 CLASS_NAMES = ['Corn-Common_rust', 'Potato-Early_blight', 'Tomato-Bacterial_spot']
 
-app = FastAPI()
+app = FastAPI(
+    title="Plant Disease Detection API",
+    description="""An API that utilises a Deep Learning model built with Keras(Tensorflow) to detect if a plant is suffering from Corn-Common_rust, Potato-Early_blight or Tomato-Bacterial_spot.""",
+    version="0.0.1",
+    debug=True,
+)
 
-@app.get('/')
-def home():
-    return {'Title': 'Plant Disease Detection API with Keras'}
+@app.get("/", response_class=PlainTextResponse)
+async def running():
+    note = """
+Plant Disease Detection API 🙌🏻
+Note: add "/docs" to the URL to get the Swagger UI Docs or "/redoc"
+  """
+    return note
 
-@app.post("/enhance")
+
+favicon_path = "favicon.png"
+
+
+@app.post("/predict")
 async def root(file: UploadFile = File(...)):
     """
     The root function returns the prediction of an image using a pretrained model.
