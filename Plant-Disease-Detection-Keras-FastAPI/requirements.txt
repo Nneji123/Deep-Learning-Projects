@@ -1,6 +1,7 @@
 fastapi[all]
-Keras-2.9.0
-tensorflow-2.9.1
-numpy-1.23.1
-pillow-9.2.0
+keras==2.9.0
+numpy==1.23.1
 opencv_python==4.4.0.46
+Pillow==9.2.0
+tensorflow==2.9.1
+gunicorn
