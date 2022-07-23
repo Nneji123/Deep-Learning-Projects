@@ -1,4 +1,4 @@
-name: Deploy OCR
+name: Deploy Plant Disease App
 
 on:
   push:
