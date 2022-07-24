@@ -1,2 +1,2 @@
 from bing_image_downloader import downloader
-downloader.download('Adidas Shoes', limit=300,  output_dir='Adidas', page_limit=200, adult_filter_off=True, force_replace=False, timeout=20, resize=(224,224) ,verbose=True)
+downloader.download('Puma Shoes', limit=300,  output_dir='Puma', page_limit=100, adult_filter_off=True, force_replace=False, timeout=20, resize=(224,224) ,verbose=True)
