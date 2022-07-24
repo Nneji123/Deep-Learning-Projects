@@ -12,7 +12,7 @@ warnings.filterwarnings("ignore")
 
 
 #Loading the Model
-model = load_model("nike-adidas-classifier.h5")
+model = load_model("./model/nike-adidas-classifier.h5")
 
 #Name of Classes
 CLASS_NAMES = ['Adidas', 'Nike']
