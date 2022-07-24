@@ -13,7 +13,7 @@ import os
 
 import numpy as np
 
-labels = ['rugby', 'soccer']
+labels = ['Nike', 'Adidas']
 img_size = 224
 def get_data(data_dir):
     data = [] 
