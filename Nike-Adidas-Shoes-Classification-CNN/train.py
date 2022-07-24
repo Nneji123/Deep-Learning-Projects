@@ -1,34 +1,78 @@
-import keras
-from keras.models import Sequential
-from keras.layers import Dense, Conv2D , MaxPool2D , Flatten , Dropout 
 from keras.preprocessing.image import ImageDataGenerator
-from keras.optimizers import Adam
+from keras.models import Sequential
+from keras.layers import Conv2D, MaxPooling2D
+from keras.layers import Activation, Dropout, Flatten, Dense
+from keras import backend as K
+from keras.models import save_model
 
-from sklearn.metrics import classification_report,confusion_matrix
 
-import tensorflow as tf
+# dimensions of our images.
+img_width, img_height = 224, 224
 
-import cv2
-import os
+train_data_dir = '/content/train'
+validation_data_dir = '/content/test'
+nb_train_samples = 400
+nb_validation_samples = 30
+epochs = 80
+batch_size = 16
 
-import numpy as np
+if K.image_data_format() == 'channels_first':
+    input_shape = (3, img_width, img_height)
+else:
+    input_shape = (img_width, img_height, 3)
 
-labels = ['Nike', 'Adidas']
-img_size = 224
-def get_data(data_dir):
-    data = [] 
-    for label in labels: 
-        path = os.path.join(data_dir, label)
-        class_num = labels.index(label)
-        for img in os.listdir(path):
-            try:
-                img_arr = cv2.imread(os.path.join(path, img))[...,::-1] #convert BGR to RGB format
-                resized_arr = cv2.resize(img_arr, (img_size, img_size)) # Reshaping images to preferred size
-                data.append([resized_arr, class_num])
-            except Exception as e:
-                print(e)
-    return np.array(data)
+model = Sequential()
+model.add(Conv2D(32, (3, 3), input_shape=input_shape))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
 
-Now we can easily fetch our train and validation data.
-train = get_data('../input/traintestsports/Main/train')
-val = get_data('../input/traintestsports/Main/test')
+model.add(Conv2D(32, (3, 3)))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+
+model.add(Conv2D(64, (3, 3)))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+
+model.add(Flatten())
+model.add(Dense(64))
+model.add(Activation('relu'))
+model.add(Dropout(0.5))
+model.add(Dense(1))
+model.add(Activation('sigmoid'))
+
+model.compile(loss='binary_crossentropy',
+              optimizer='rmsprop',
+              metrics=['accuracy'])
+
+# this is the augmentation configuration we will use for training
+train_datagen = ImageDataGenerator(
+    rescale=1. / 255,
+    shear_range=0.2,
+    zoom_range=0.2,
+    horizontal_flip=True)
+
+# this is the augmentation configuration we will use for testing:
+# only rescaling
+test_datagen = ImageDataGenerator(rescale=1. / 255)
+
+train_generator = train_datagen.flow_from_directory(
+    train_data_dir,
+    target_size=(img_width, img_height),
+    batch_size=batch_size,
+    class_mode='binary')
+
+validation_generator = test_datagen.flow_from_directory(
+    validation_data_dir,
+    target_size=(img_width, img_height),
+    batch_size=batch_size,
+    class_mode='binary')
+
+model.fit_generator(
+    train_generator,
+    steps_per_epoch=nb_train_samples // batch_size,
+    epochs=epochs,
+    validation_data=validation_generator,
+    validation_steps=nb_validation_samples // batch_size)
+
+model.save('nike-adidas-classifier.h5')
