@@ -1,6 +1,6 @@
 opencv-python-headless==4.2.0.32
 pytesseract==0.3.7
 numpy==1.19.3
-Flask==2.1.0
+Flask==2.2.2
 Pillow==8.0.1
 gunicorn
