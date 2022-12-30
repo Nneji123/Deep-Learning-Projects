@@ -2,7 +2,7 @@ bing_image_downloader==1.1.2
 fastapi[all]
 keras==2.9.0
 tensorflow==2.9.1
-opencv_python==4.4.0.46
+opencv_python==4.7.0.68
 numpy==1.23.1
 Pillow==9.2.0
 gunicorn
